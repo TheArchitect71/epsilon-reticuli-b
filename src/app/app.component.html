@@ -1,21 +1,59 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
-  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
-</div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/cli">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
+<mat-toolbar color="primary">
+  <h1>Astronaut Directory</h1>
+  <button mat-button [matMenuTriggerFor]="menu">
+    <mat-icon>account_circle</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item class="menu-button">Log out</button>
+  </mat-menu>
+</mat-toolbar>
+<mat-sidenav-container>
+  <mat-sidenav mode="side" opened role="region">
+    <mat-form-field class="search">
+      <input matInput placeholder="Search astronauts">
+    </mat-form-field>
+    <mat-divider></mat-divider>
+    <ng-container *ngFor="let filter of filters | async; last as last">
+      <mat-list>
+        <h3 matSubheader>{{ filter.displayName }}</h3>
 
-<router-outlet></router-outlet>
+        <ng-container *ngIf="filterState[filter.category] === ''; else chip">
+          <mat-list-item *ngFor="let val of filter.options">
+            <button mat-button class="list-button" (click)="changeFilter(filter.category, val)">
+              {{ val }}
+            </button>
+          </mat-list-item>
+        </ng-container>
+
+        <ng-template #chip>
+          <mat-chip-list>
+            <ng-container *ngFor="let val of filter.options">
+              <mat-chip *ngIf="filterState[filter.category] === val" (removed)="changeFilter(filter.category, '')">
+                {{val}}
+                <mat-icon matChipRemove>cancel</mat-icon>
+              </mat-chip>
+            </ng-container>
+          </mat-chip-list>
+        </ng-template>
+      </mat-list>
+      <mat-divider *ngIf="!last"></mat-divider>
+    </ng-container>
+  </mat-sidenav>
+  <mat-sidenav-content role="region">
+    <mat-card *ngFor="let astronaut of astronauts | async">
+      <mat-card-title>{{astronaut.name}}</mat-card-title>
+      <img mat-card-image [src]="astronaut.photo">
+      <mat-card-content>
+        <dl>
+          <dt class="mat-small">Name</dt>
+          <dd class="mat-body-2">{{ astronaut.name }}</dd>
+          <dt class="mat-small">Space walks</dt>
+          <dd class="mat-body-2">{{ astronaut.spaceWalks }}</dd>
+          <dt class="mat-small">Undergraduate major</dt>
+          <dd class="mat-body-2">{{ astronaut.undergraduateMajor }}</dd>
+        </dl>
+      </mat-card-content>
+    </mat-card>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+<button mat-fab aria-label="Add an astronaut" (click)="addAstronaut()"><mat-icon>add</mat-icon></button>
