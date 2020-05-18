@@ -16,12 +16,13 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material';
-import { MatSelectModule,  } from '@angular/material/select';
+import { MatSelectModule, } from '@angular/material/select';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AddAstronautComponent } from './add-astronaut/add-astronaut.component';
+import { AppRoutingModule } from './app-routing.module';
 
 
 @NgModule({
@@ -32,6 +33,7 @@ import { AddAstronautComponent } from './add-astronaut/add-astronaut.component';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    AppRoutingModule,
     HttpClientModule,
     MatToolbarModule,
     MatSidenavModule,
