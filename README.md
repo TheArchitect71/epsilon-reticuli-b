@@ -1,25 +1,48 @@
 # Epsilon Reticuli B — Astronaut Directory
 
-Angular22 migration of the existing Angular7 directory. Preserves50bundledastronauts, filter/chip controls, account menu and validated add-astronaut dialog.
+An astronaut directory UI experiment with a sidebar, selection chips, portrait cards, and an add-astronaut dialog. It uses 50 bundled records in an Angular/Material frontend.
 
-## Run
+## What you can do
+
+- Browse astronaut profiles and education details.
+- Select and clear sidebar filter chips.
+- Open the account menu and try the validated add-astronaut form.
+
+## Preview
+
+![An astronaut directory UI experiment with a sidebar, selection chips, portrait cards, and an add-astronaut dialog](docs/screenshots/desktop.png)
+
+Captured from the running application on September 30, 2026. Any sample records shown are demonstration or isolated test data, not data included with a fresh installation.
+
+<details>
+<summary>Mobile view</summary>
+
+![Mobile an astronaut directory ui experiment with a sidebar, selection chips, portrait cards, and an add-astronaut dialog](docs/screenshots/mobile.png)
+
+</details>
+
+## Run locally
+
+Use the Node version in `.nvmrc` (currently 26.10.0) and npm. Run these commands from the repository root.
 
 ```sh
-nvm use
+nvm use  # if you manage Node with nvm
 npm ci
 npm start
 ```
 
-Foreground http://127.0.0.1:4200; Ctrl+C to stop. Bundleddata/forms work offline. Original NASA/Wikimedia portrait URLs remain in the dataset; a bundledplaceholder is used while offline or when a portrait fails. No remote fonts required.
+Open [http://127.0.0.1:4200](http://127.0.0.1:4200). Keep the server in the foreground; stop it with **Ctrl+C**.
 
-## Scope retained
+## Current scope
 
-Original search input is a display placeholder; selecting a filter changes its chip but does not filter cards. Add-astronaut Save logs values and closes the dialog; it does not persist or append records. Original Log out menu has no backend action. These existing demonstration behaviors remain; no backend/data persistence invented. Mobile sidebar is now a toggleable overlay so it does not squeeze the directory offscreen.
+Filter chips show your selection but do not filter the cards; search and logout are placeholders. Saving the form logs its values and closes it without adding or persisting an astronaut. Portraits use the original NASA/Wikimedia URLs, with a bundled fallback when unavailable; the screenshot shows the offline fallback.
 
-## Checks and versions
+## Development
 
-`npm run build`, `npm run typecheck`, `npm test -- --browsers=ChromeHeadless`, `npm audit`. Set CHROME_BIN for Chrome installed outside /Applications.
+```sh
+npm run build
+npm run typecheck
+npm test -- --browsers=ChromeHeadless
+```
 
-Angular/core/CLI/build22.2.0, Material/CDK22.2.1, RxJS7.8.2, Zone0.16.3, Node26.10.0. TS6.0.3 held by Angular>=6<6.1; Jasmine6.3/types6 held because Jasmine7 read-only globals fail with zone-testing0.16.3. Nativebuilder/ES2022/currentMaterialchips and standalonefalse/EagerZone preserve modulebehavior. UndeclaredLodash replaced by nativeSet/stringsort; sharedreplay reuses bundleddata. [Official Angular compatibility](https://angular.dev/reference/versions).
-
-Build/types, fiveChromium tests and productionPlaywrightdesktop1280x800/mobile390x844 pass:50cards, filterchip/reset, accountmenu, dialogvalidation/save/cancel, offlineportraits, nohorizontaloverflow/pageerrors/externalrequests. Browserplugin absent; existingPlaywright/Chromium148 used. Source snapshotepsilon-before-angular22.tar.gz and screenshots outside repo in mission/Codex evidence folders. Initialbundle1.12MB exceeds1MBwarning but below2MBerror; optionaloptimization remains. Externalportrait availability/otherbrowsers not validated.
+Browser tests require Chrome or Chromium; set `CHROME_BIN` if it is outside the standard installation path. Angular 22 currently requires TypeScript 6.0.x. The Jasmine 6 test dependencies are retained for compatibility with Zone.js.
