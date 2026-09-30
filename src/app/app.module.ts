@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, provideZoneChangeDetection } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -15,7 +15,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material';
+import { MatNativeDateModule } from '@angular/material/core';
 import { MatSelectModule, } from '@angular/material/select';
 import { ReactiveFormsModule } from '@angular/forms';
 
@@ -53,11 +53,11 @@ import { AppRoutingModule } from './app-routing.module';
     MatSelectModule,
     ReactiveFormsModule,
   ],
-  providers: [],
+  providers: [provideZoneChangeDetection()],
   bootstrap: [AppComponent],
   // Don't forget to list AddAstronautComponent as an entry component!
   // This is needed because it is added to the DOM programmatically--
   // it doesn't appear in the template of any other component
-  entryComponents: [AddAstronautComponent]
+
 })
 export class AppModule { }

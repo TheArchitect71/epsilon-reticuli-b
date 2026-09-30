@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FilterState, Filter, Option, Astronaut } from './types';
-import * as _ from 'lodash';
+
 import { Observable } from 'rxjs';
-import { tap, map, share } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +15,7 @@ export class AstronautService {
 
   constructor(http: HttpClient) {
     this.astronauts = http.get<Astronaut[]>('assets/astronauts.json').pipe(
-      share()
+      shareReplay({bufferSize:1,refCount:true})
     );
     this.filters = this.astronauts.pipe(
       map(astronauts => this.createFilters(astronauts))
@@ -36,10 +36,6 @@ export class AstronautService {
 
   private extractFilterOptions(category: string, astronauts: Astronaut[]): Option[] {
     this.filterState[category] = '';
-    return _.chain(astronauts)
-      .groupBy(category)
-      .keys()
-      .sort()
-      .value();
+    return [...new Set(astronauts.map(a=>String(a[category])))].sort();
   }
 }

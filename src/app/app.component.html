@@ -1,14 +1,14 @@
 <mat-toolbar color="primary">
-  <h1>Astronaut Directory</h1>
-  <button mat-button [matMenuTriggerFor]="menu">
-    <mat-icon>account_circle</mat-icon>
+  <div class="title"><button mat-button aria-label="Toggle filters" [hidden]="!isMobile" (click)="drawer.toggle()">☰</button><h1>Astronaut Directory</h1></div>
+  <button mat-button aria-label="Account menu" [matMenuTriggerFor]="menu">
+    <span aria-hidden="true">●</span>
   </button>
   <mat-menu #menu="matMenu">
     <button mat-menu-item class="menu-button">Log out</button>
   </mat-menu>
 </mat-toolbar>
 <mat-sidenav-container>
-  <mat-sidenav mode="side" opened role="region">
+  <mat-sidenav #drawer [mode]="isMobile ? 'over' : 'side'" [opened]="!isMobile" role="region">
     <mat-form-field class="search">
       <input matInput placeholder="Search astronauts">
     </mat-form-field>
@@ -26,14 +26,14 @@
         </ng-container>
 
         <ng-template #chip>
-          <mat-chip-list>
+          <mat-chip-set>
             <ng-container *ngFor="let val of filter.options">
-              <mat-chip *ngIf="filterState[filter.category] === val" (removed)="changeFilter(filter.category, '')">
+              <mat-chip-row *ngIf="filterState[filter.category] === val" (removed)="changeFilter(filter.category, '')">
                 {{val}}
-                <mat-icon matChipRemove>cancel</mat-icon>
-              </mat-chip>
+                <button matChipRemove aria-label="Clear filter">×</button>
+              </mat-chip-row>
             </ng-container>
-          </mat-chip-list>
+          </mat-chip-set>
         </ng-template>
       </mat-list>
       <mat-divider *ngIf="!last"></mat-divider>
@@ -41,8 +41,8 @@
   </mat-sidenav>
   <mat-sidenav-content role="region">
     <mat-card *ngFor="let astronaut of astronauts | async">
-      <mat-card-title>{{astronaut.name}}</mat-card-title>
-      <img mat-card-image [src]="astronaut.photo">
+      <mat-card-header><mat-card-title>{{astronaut.name}}</mat-card-title></mat-card-header>
+      <img mat-card-image [src]="photoUrl(astronaut)" [alt]="astronaut.name" (error)="photoUnavailable($event)">
       <mat-card-content>
         <dl>
           <dt class="mat-small">Name</dt>
@@ -56,4 +56,4 @@
     </mat-card>
   </mat-sidenav-content>
 </mat-sidenav-container>
-<button mat-fab aria-label="Add an astronaut" (click)="addAstronaut()"><mat-icon>add</mat-icon></button>
+<button mat-fab aria-label="Add an astronaut" (click)="addAstronaut()"><span aria-hidden="true">+</span></button>
