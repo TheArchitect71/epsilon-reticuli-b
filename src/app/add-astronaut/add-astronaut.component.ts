@@ -1,23 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Validators, FormGroup, FormBuilder } from '@angular/forms';
+import { Validators, UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { AstronautService } from '../astronaut.service';
 import { Observable } from 'rxjs';
 import { Option } from '../types';
 import { map } from 'rxjs/operators';
 
 @Component({
+standalone:false,changeDetection:ChangeDetectionStrategy.Eager,
   selector: 'app-add-astronaut',
   templateUrl: './add-astronaut.component.html',
   styleUrls: ['./add-astronaut.component.css']
 })
 export class AddAstronautComponent {
-  astronaut: FormGroup;
+  astronaut: UntypedFormGroup;
   undergraduateMajors: Observable<Option[]>;
 
   constructor(
     private dialogRef: MatDialogRef<AddAstronautComponent>,
-    fb: FormBuilder,
+    fb: UntypedFormBuilder,
     astronautService: AstronautService
   ) {
     this.astronaut = fb.group({

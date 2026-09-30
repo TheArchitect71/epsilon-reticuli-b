@@ -24,15 +24,19 @@ mat-sidenav-content {
   padding: 16px;
   display: grid;
   grid-gap: 10px;
-  grid-template-columns: repeat(auto-fill, 280px);
+  grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
 }
 
 mat-card {
-  width: 232px;
+  width: auto;
+  min-width: 0;
 }
 
 [mat-card-image] {
   height: 330px;
+  object-fit: contain;
+  background: #444;
+  width: 100%;
 }
 
 dl {
@@ -79,3 +83,7 @@ mat-menu {
   right: 50px;
   z-index: 10;
 }
+
+.title { display:flex; align-items:center; gap:8px; min-width:0; }
+mat-toolbar h1 { margin:0; font-size:24px; }
+@media(max-width:699px) { mat-toolbar h1 { font-size:18px; } mat-sidenav { width: min(310px, 90vw); } [mat-fab] { bottom:24px; right:24px; } }
