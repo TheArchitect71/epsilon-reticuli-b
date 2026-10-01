@@ -1,8 +1,30 @@
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
+import { RouterTestingHarness } from '@angular/router/testing';
+import { Router } from '@angular/router';
 import { AppModule } from './app.module';
 import { AppComponent } from './app.component';
-import { AstronautService } from './astronaut.service';
-describe('astronaut grid',()=>{beforeEach(async()=>{await TestBed.configureTestingModule({imports:[AppModule],providers:[{provide:AstronautService,useValue:{astronauts:of([{name:'Sample Astronaut',spaceWalks:2,undergraduateMajor:'Physics'}]),filters:of([]),filterState:{}}}]}).compileComponents();});
-it('renders existing identity and astronaut fields',()=>{const f=TestBed.createComponent(AppComponent);f.detectChanges();expect(f.nativeElement.textContent).toContain('Astronaut Directory');expect(f.nativeElement.textContent).toContain('Sample Astronaut');expect(f.nativeElement.textContent).toContain('Physics');expect(f.nativeElement.querySelectorAll('mat-card').length).toBe(1);});
-it('preserves filter state updates',()=>{const f=TestBed.createComponent(AppComponent);f.componentInstance.changeFilter('spaceWalks',2);expect(f.componentInstance.filterState['spaceWalks']).toBe(2);});});
+import { ClientsService } from './clients.service';
+import { AuthService, authInterceptor } from './auth.service';
+import { LoginComponent } from './login.component';
+import { DirectoryComponent, PersonFormComponent, PersonDetailComponent } from './directory/pages';
+const person = { id: 'person-1', name: 'Ada Sample', role: 'Astronaut', organization: 'NASA', status: 'Active', expertise: 'Physics', notes: '' };
+describe('Epsilon + Betazed workspace', () => {
+  let store: ClientsService; let http: HttpTestingController;
+  beforeEach(async () => {
+    sessionStorage.setItem('epsilon.session.v1', 'test-token');
+    await TestBed.configureTestingModule({ imports: [AppModule], providers: [provideHttpClient(withInterceptors([authInterceptor])), provideHttpClientTesting()] }).compileComponents();
+    http = TestBed.inject(HttpTestingController); store = TestBed.inject(ClientsService); http.expectOne('/api/people').flush([person]);
+  });
+  afterEach(() => { http.verify(); sessionStorage.clear(); });
+  it('renders the renamed shell and sign-out control', () => { const f = TestBed.createComponent(AppComponent); f.detectChanges(); expect(f.nativeElement.textContent).toContain('Epsilon Reticuli B'); expect(f.nativeElement.textContent).toContain('Sign out'); });
+  it('protects directory routes and preserves the requested return URL', async () => { TestBed.inject(AuthService).logout(); const h = await RouterTestingHarness.create('/people/person-1'); expect(h.routeNativeElement.textContent).toContain('Sign in'); expect(TestBed.inject(Router).url).toContain('returnUrl'); });
+  it('restores search and view controls from the URL', async () => { const h = await RouterTestingHarness.create(); const p = await h.navigateByUrl('/people?q=ada&status=Active&view=table', DirectoryComponent); expect(p.filtered.length).toBe(1); expect(h.routeNativeElement.querySelectorAll('tbody tr').length).toBe(1); });
+  it('validates a person before issuing a write', async () => { const h = await RouterTestingHarness.create(); const p = await h.navigateByUrl('/people/new', PersonFormComponent); p.form.patchValue({ name: '   ', role: 'Engineer' }); p.save(); h.detectChanges(); expect(p.form.invalid).toBeTrue(); http.expectNone('/api/people'); });
+  it('creates a person and routes to the server-issued id', async () => { const h = await RouterTestingHarness.create(); const p = await h.navigateByUrl('/people/new', PersonFormComponent); p.form.patchValue({ name: 'Casey', role: 'Designer' }); p.save(); expect(p.saving).toBeTrue(); http.expectOne('/api/people').flush({ ...person, id: 'person-2', name: 'Casey', role: 'Designer' }); await h.fixture.whenStable(); expect(TestBed.inject(Router).url).toBe('/people/person-2'); expect(store.people.length).toBe(2); });
+  it('loads existing data into the editor and saves via PUT', async () => { const h = await RouterTestingHarness.create(); const p = await h.navigateByUrl('/people/person-1/edit', PersonFormComponent); expect(p.form.controls.name.value).toBe(person.name); p.form.patchValue({ notes: 'Updated' }); p.save(); const req = http.expectOne('/api/people/person-1'); expect(req.request.method).toBe('PUT'); req.flush({ ...person, notes: 'Updated' }); await h.fixture.whenStable(); expect(store.find(person.id).notes).toBe('Updated'); });
+  it('requires delete confirmation before sending a request', async () => { const h = await RouterTestingHarness.create(); const p = await h.navigateByUrl('/people/person-1', PersonDetailComponent); h.routeNativeElement.querySelectorAll('button').forEach(b => { if (b.textContent === 'Delete person') b.click(); }); h.detectChanges(); expect(p.confirming).toBeTrue(); http.expectNone('/api/people/person-1'); p.remove(); http.expectOne('/api/people/person-1').flush(null); await h.fixture.whenStable(); expect(store.people).toEqual([]); });
+  it('signs in and loads the account directory', async () => { TestBed.inject(AuthService).logout(); const h = await RouterTestingHarness.create(); const p = await h.navigateByUrl('/login', LoginComponent); p.form.patchValue({ username: 'user', password: 'test-password' }); p.submit(); const req = http.expectOne('/api/auth/login'); expect(req.request.headers.has('Authorization')).toBeFalse(); req.flush({ access_token: 'new-token' }); http.expectOne('/api/people').flush([]); await h.fixture.whenStable(); expect(TestBed.inject(Router).url).toBe('/overview'); });
+  it('registers before signing in and gives errors for invalid credentials', async () => { TestBed.inject(AuthService).logout(); const h = await RouterTestingHarness.create(); const p = await h.navigateByUrl('/login', LoginComponent); p.registering = true; p.form.patchValue({ name: 'Test User', age: 30, username: 'user', password: 'test-password' }); p.submit(); http.expectOne('/api/users').flush({ id: 'user-id' }); http.expectOne('/api/auth/login').flush({}, { status: 401, statusText: 'Unauthorized' }); expect(p.error).toContain('incorrect'); expect(p.busy).toBeFalse(); });
+});

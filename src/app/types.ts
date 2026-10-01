@@ -1,32 +1,14 @@
-export interface Astronaut {
+export interface Person {
+  id: string;
   name: string;
-  year: number;
-  group: number;
+  role: string;
+  organization: string;
   status: string;
-  birthdate: string;
-  birthPlace: string;
-  gender: string;
-  almaMater: string;
-  undergraduateMajor: string;
-  graduateMajor: string;
-  militaryRank: string;
-  militaryBranch: string;
-  spaceFlights: number;
-  spaceFlightHours: number;
-  spaceWalks: number;
-  spaceWalkHours: number;
-  missions: string;
-  deathDate: string;
-  deathMission: string;
-  photo: string;
+  expertise: string;
+  notes: string;
+  spaceWalks?: number;
+  spaceFlights?: number;
+  missions?: string;
+  almaMater?: string;
 }
-
-export interface Filter {
-  category: string;
-  displayName: string;
-  options: Option[];
-}
-
-export type FilterState = Record<string, Option>;
-
-export type Option = string | number;
+export type PersonInput = Omit<Person, 'id'>;

@@ -1,63 +1,35 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, provideZoneChangeDetection } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatListModule } from '@angular/material/list';
-import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatSelectModule, } from '@angular/material/select';
-import { ReactiveFormsModule } from '@angular/forms';
-
-import { AppComponent } from './app.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AddAstronautComponent } from './add-astronaut/add-astronaut.component';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { authInterceptor } from './auth.service';
+import { LoginComponent } from './login.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
-
-
+import { AppComponent } from './app.component';
+import {
+  OverviewComponent,
+  DirectoryComponent,
+  PersonDetailComponent,
+  PersonFormComponent,
+  AboutComponent,
+  NotFoundComponent,
+} from './directory/pages';
 @NgModule({
   declarations: [
+    LoginComponent,
     AppComponent,
-    AddAstronautComponent
+    OverviewComponent,
+    DirectoryComponent,
+    PersonDetailComponent,
+    PersonFormComponent,
+    AboutComponent,
+    NotFoundComponent,
   ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    AppRoutingModule,
-    HttpClientModule,
-    MatToolbarModule,
-    MatSidenavModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatDividerModule,
-    MatListModule,
-    MatButtonModule,
-    MatChipsModule,
-    MatIconModule,
-    MatMenuModule,
-    MatDialogModule,
-    MatRadioModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatSelectModule,
-    ReactiveFormsModule,
+  imports: [BrowserModule, FormsModule, ReactiveFormsModule, AppRoutingModule],
+  providers: [
+    provideZoneChangeDetection(),
+    provideHttpClient(withInterceptors([authInterceptor])),
   ],
-  providers: [provideZoneChangeDetection()],
   bootstrap: [AppComponent],
-  // Don't forget to list AddAstronautComponent as an entry component!
-  // This is needed because it is added to the DOM programmatically--
-  // it doesn't appear in the template of any other component
-
 })
-export class AppModule { }
+export class AppModule {}

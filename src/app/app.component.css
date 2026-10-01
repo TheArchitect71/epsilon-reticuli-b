@@ -1,89 +1,72 @@
-:host {
-  height: 100vh;
-  display: grid;
-  grid-template: "toolbar"
-                 "page-container" 1fr;
+.app-header {
+  display:flex;
+  align-items:center;
+  gap:40px;
+  padding:22px 5%;
+  border-bottom:1px solid #3a3e4d;
+  background:#242733;
 }
-
-h1 {
-  grid-area: title;
+.brand {
+  font-size:22px;
+  font-weight:700;
+  text-decoration:none;
+  color:#fff;
 }
-
-mat-toolbar {
-  grid-area: toolbar;
-  display: grid;
-  grid-template:  "title menu" auto
-  / 1fr 50px;
+.brand span {
+  display:block;
+  font-size:12px;
+  font-weight:400;
+  color:#b6bbca;
+  margin-top:5px;
 }
-
-mat-sidenav-container {
-  grid-area: page-container
+nav {
+  display:flex;
+  gap:8px;
+  margin-left:auto;
 }
-
-mat-sidenav-content {
-  padding: 16px;
-  display: grid;
-  grid-gap: 10px;
-  grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
+nav a {
+  padding:10px 18px;
+  border-radius:6px;
+  color:#c7cada;
+  text-decoration:none;
 }
-
-mat-card {
-  width: auto;
-  min-width: 0;
+nav a:hover,nav a.selected {
+  background:#383448;
+  color:#ffa3c4;
 }
-
-[mat-card-image] {
-  height: 330px;
-  object-fit: contain;
-  background: #444;
-  width: 100%;
+main {
+  max-width:1200px;
+  margin:auto;
+  padding:40px 5%;
+  min-height:calc(100vh - 235px);
 }
-
-dl {
-  display: grid;
-  grid-template-columns: 2fr 3fr;
+footer {
+  padding:22px 5%;
+  border-top:1px solid #3a3e4d;
+  color:#a8aebb;
+  font-size:12px;
 }
-
-dd {
-  margin-inline-start: 0;
+.menu-toggle {
+  display:none;
 }
-
-mat-sidenav {
-  width: 310px;
+@media(max-width:600px) {
+  .app-header {
+    flex-wrap:wrap;
+    gap:12px;
+  }
+  .menu-toggle {
+    display:block;
+    margin-left:auto;
+  }
+  nav {
+    display:none;
+    width:100%;
+    margin:0;
+  }
+  nav.open {
+    display:flex;
+  }
+  main {
+    padding-top:24px;
+  }
 }
-
-.search {
-  padding: 16px;
-}
-
-.list-button {
-  width: 100%;
-  text-align: left;
-}
-
-mat-chip.mat-chip {
-  margin: 0 16px 16px;
-}
-
-::ng-deep .mat-chip-list-wrapper {
-  margin: 0 !important;
-}
-
-.menu-button {
-  grid-area: menu;
-}
-
-mat-menu {
-  display: none
-}
-
-[mat-fab] {
-  position: fixed;
-  bottom: 50px;
-  right: 50px;
-  z-index: 10;
-}
-
-.title { display:flex; align-items:center; gap:8px; min-width:0; }
-mat-toolbar h1 { margin:0; font-size:24px; }
-@media(max-width:699px) { mat-toolbar h1 { font-size:18px; } mat-sidenav { width: min(310px, 90vw); } [mat-fab] { bottom:24px; right:24px; } }

@@ -30,7 +30,6 @@
               "src/assets"
             ],
             "styles": [
-              "node_modules/@angular/material/prebuilt-themes/pink-bluegrey.css",
               "src/styles.css"
             ],
             "outputPath": "dist/epsilon-reticuli-b",
@@ -79,7 +78,11 @@
               "buildTarget": "epsilon-reticuli-b:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {
+            "proxyConfig": "proxy.conf.json",
+            "port": 4202
+          }
         },
         "extract-i18n": {
           "builder": "@angular/build:extract-i18n"
@@ -97,7 +100,6 @@
               "src/assets"
             ],
             "styles": [
-              "node_modules/@angular/material/prebuilt-themes/pink-bluegrey.css",
               "src/styles.css"
             ]
           }

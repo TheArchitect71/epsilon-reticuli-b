@@ -1,59 +1,12 @@
-<mat-toolbar color="primary">
-  <div class="title"><button mat-button aria-label="Toggle filters" [hidden]="!isMobile" (click)="drawer.toggle()">☰</button><h1>Astronaut Directory</h1></div>
-  <button mat-button aria-label="Account menu" [matMenuTriggerFor]="menu">
-    <span aria-hidden="true">●</span>
-  </button>
-  <mat-menu #menu="matMenu">
-    <button mat-menu-item class="menu-button">Log out</button>
-  </mat-menu>
-</mat-toolbar>
-<mat-sidenav-container>
-  <mat-sidenav #drawer [mode]="isMobile ? 'over' : 'side'" [opened]="!isMobile" role="region">
-    <mat-form-field class="search">
-      <input matInput placeholder="Search astronauts">
-    </mat-form-field>
-    <mat-divider></mat-divider>
-    <ng-container *ngFor="let filter of filters | async; last as last">
-      <mat-list>
-        <h3 matSubheader>{{ filter.displayName }}</h3>
-
-        <ng-container *ngIf="filterState[filter.category] === ''; else chip">
-          <mat-list-item *ngFor="let val of filter.options">
-            <button mat-button class="list-button" (click)="changeFilter(filter.category, val)">
-              {{ val }}
-            </button>
-          </mat-list-item>
-        </ng-container>
-
-        <ng-template #chip>
-          <mat-chip-set>
-            <ng-container *ngFor="let val of filter.options">
-              <mat-chip-row *ngIf="filterState[filter.category] === val" (removed)="changeFilter(filter.category, '')">
-                {{val}}
-                <button matChipRemove aria-label="Clear filter">×</button>
-              </mat-chip-row>
-            </ng-container>
-          </mat-chip-set>
-        </ng-template>
-      </mat-list>
-      <mat-divider *ngIf="!last"></mat-divider>
-    </ng-container>
-  </mat-sidenav>
-  <mat-sidenav-content role="region">
-    <mat-card *ngFor="let astronaut of astronauts | async">
-      <mat-card-header><mat-card-title>{{astronaut.name}}</mat-card-title></mat-card-header>
-      <img mat-card-image [src]="photoUrl(astronaut)" [alt]="astronaut.name" (error)="photoUnavailable($event)">
-      <mat-card-content>
-        <dl>
-          <dt class="mat-small">Name</dt>
-          <dd class="mat-body-2">{{ astronaut.name }}</dd>
-          <dt class="mat-small">Space walks</dt>
-          <dd class="mat-body-2">{{ astronaut.spaceWalks }}</dd>
-          <dt class="mat-small">Undergraduate major</dt>
-          <dd class="mat-body-2">{{ astronaut.undergraduateMajor }}</dd>
-        </dl>
-      </mat-card-content>
-    </mat-card>
-  </mat-sidenav-content>
-</mat-sidenav-container>
-<button mat-fab aria-label="Add an astronaut" (click)="addAstronaut()"><span aria-hidden="true">+</span></button>
+<header class="app-header">
+  <a class="brand" routerLink="/overview">Epsilon Reticuli B<span>People workspace</span></a>
+  <button *ngIf="auth.token" class="menu-toggle" type="button" (click)="menuOpen = !menuOpen" [attr.aria-expanded]="menuOpen" aria-controls="main-navigation">Menu</button>
+  <nav *ngIf="auth.token" id="main-navigation" aria-label="Main navigation" [class.open]="menuOpen">
+    <a routerLink="/overview" routerLinkActive="selected" (click)="menuOpen = false">Overview</a>
+    <a routerLink="/people" routerLinkActive="selected" (click)="menuOpen = false">People</a>
+    <a routerLink="/about" routerLinkActive="selected" (click)="menuOpen = false">About</a>
+    <button (click)="auth.logout(); menuOpen = false">Sign out</button>
+  </nav>
+</header>
+<main id="main-content"><router-outlet></router-outlet></main>
+<footer>Epsilon Reticuli B · Powered by Betazed MongoDB</footer>

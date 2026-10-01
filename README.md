@@ -1,45 +1,61 @@
-> **Consolidated application:** Epsilon’s profile and form workflow is now part of [Event Horizon — People Workspace](https://github.com/TheArchitect71/Event-Horizon). Run that application for persistent create/read/update/delete, routed profiles, functional search/filtering, and cohesive navigation. This archived repository preserves the original standalone experiment and its history. Active development continues in Event Horizon.
+# Epsilon Reticuli B — Betazed MongoDB frontend
 
-# Epsilon Reticuli B — Astronaut Directory
+The combined Epsilon Reticuli B and Event Horizon application now lives here under the `epsilon-reticuli-b` name. This Angular people workspace is the frontend for [Betazed MongoDB](https://github.com/TheArchitect71/betazed-mongodb), with account registration, JWT login, and MongoDB-backed directory CRUD.
 
-An astronaut directory UI experiment with a sidebar, selection chips, portrait cards, and an add-astronaut dialog. It uses 50 bundled records in an Angular/Material frontend.
+## Features
 
-## What you can do
+- Account registration, sign-in, sign-out, and expired-session handling.
+- Each signed-in account has its own directory; the API enforces record ownership.
+- Overview, searchable/filterable directory, card/table views, profile details, create/edit forms, and confirmed deletion.
+- URL-based filter state and browser-back navigation, loading/error/empty states, and responsive mobile navigation.
+- JSON export and an optional historical astronaut sample on the About page.
 
-- Browse astronaut profiles and education details.
-- Select and clear sidebar filter chips.
-- Open the account menu and try the validated add-astronaut form.
+## Run the pair
 
-## Preview
+Use Node 26.10.0 from `.nvmrc` (backend tests require Node >=24.9). Run processes in foreground terminals and stop each with **Ctrl+C**.
 
-![An astronaut directory UI experiment with a sidebar, selection chips, portrait cards, and an add-astronaut dialog](docs/screenshots/desktop.png)
-
-Captured from the running application on September 30, 2026. Any sample records shown are demonstration or isolated test data, not data included with a fresh installation.
-
-<details>
-<summary>Mobile view</summary>
-
-![Mobile an astronaut directory ui experiment with a sidebar, selection chips, portrait cards, and an add-astronaut dialog](docs/screenshots/mobile.png)
-
-</details>
-
-## Run locally
-
-Use the Node version in `.nvmrc` (currently 26.10.0) and npm. Run these commands from the repository root.
+First, make sure local MongoDB is running. If you already have MongoDB on port 27017, reuse it. In a terminal:
 
 ```sh
-nvm use  # if you manage Node with nvm
+cd "../betazed-mongodb"
+npm ci
+npm run setup:local
+MONGODB_URI='mongodb://127.0.0.1:27017/betazed' PORT=3001 npm run start:dev
+```
+
+Alternatively, follow Betazed’s README to start a separate local replica set on port 27018; then omit the `MONGODB_URI` override. Setup preserves an existing `.env.local` and generates a private JWT secret if one is absent.
+
+In another terminal, from this repository:
+
+```sh
 npm ci
 npm start
 ```
 
-Open [http://127.0.0.1:4200](http://127.0.0.1:4200). Keep the server in the foreground; stop it with **Ctrl+C**.
+Open http://127.0.0.1:4202, create an account, and add people. The directory starts empty. The About page can add a sample profile that you can edit or delete.
 
-## Current scope
+Angular’s `proxy.conf.json` forwards `/api/**` to `http://127.0.0.1:3001`, removing the `/api` prefix. Change the target if Betazed uses a different port.
 
-Filter chips show your selection but do not filter the cards; search and logout are placeholders. Saving the form logs its values and closes it without adding or persisting an astronaut. Portraits use the original NASA/Wikimedia URLs, with a bundled fallback when unavailable; the screenshot shows the offline fallback.
+## Persistence and deployment
 
-## Development
+People records are stored in MongoDB. The bearer token is kept in sessionStorage for the current browser tab and survives a reload; clearing browser storage signs you out without deleting server records. JWT sessions expire after one hour. Signing in again retrieves the account’s directory.
+
+The former Event Horizon localStorage directory is not automatically uploaded; that historical version remains available in its archived repository. Sample records are historical and are not a current NASA roster.
+
+Production hosting must serve `index.html` for frontend routes and reverse-proxy `/api` to Betazed, stripping that prefix. The Angular development proxy is used only by `ng serve`.
+
+## Preview and verification
+
+![Epsilon people workspace on desktop](docs/screenshots/desktop.png)
+
+<details>
+<summary>Mobile view</summary>
+
+![Epsilon people workspace on mobile](docs/screenshots/mobile.png)
+
+</details>
+
+Screenshots show an isolated test account with sample/test records; these are not automatically added to a fresh account. Desktop (1280×900) and mobile (390×844) checks exercised the built frontend with the real NestJS API and a separate local MongoDB test database. The finite test harness supplied compiled frontend files and forwarded API requests directly to NestJS; it did not start a development server. Test data was removed after verification.
 
 ```sh
 npm run build
@@ -47,4 +63,10 @@ npm run typecheck
 npm test -- --browsers=ChromeHeadless
 ```
 
-Browser tests require Chrome or Chromium; set `CHROME_BIN` if it is outside the standard installation path. Angular 22 currently requires TypeScript 6.0.x. The Jasmine 6 test dependencies are retained for compatibility with Zone.js.
+Set `CHROME_BIN` if Chromium is outside its standard installation path. Frontend tests verify login, route protection, authenticated requests, confirmed writes, error handling, account-state clearing, and the CRUD/navigation workflows.
+
+## Repositories
+
+- **This repository:** active combined frontend; Epsilon’s original Git history is preserved.
+- **[Betazed MongoDB](https://github.com/TheArchitect71/betazed-mongodb):** active backend, authentication, and database persistence.
+- **[Event Horizon](https://github.com/TheArchitect71/Event-Horizon):** archived predecessor, preserving its separate Git history.
