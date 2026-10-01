@@ -1,3 +1,5 @@
+> **Consolidated application:** Epsilon’s profile and form workflow is now part of [Event Horizon — People Workspace](https://github.com/TheArchitect71/Event-Horizon). Run that application for persistent create/read/update/delete, routed profiles, functional search/filtering, and cohesive navigation. This archived repository preserves the original standalone experiment and its history. Active development continues in Event Horizon.
+
 # Epsilon Reticuli B — Astronaut Directory
 
 An astronaut directory UI experiment with a sidebar, selection chips, portrait cards, and an add-astronaut dialog. It uses 50 bundled records in an Angular/Material frontend.
